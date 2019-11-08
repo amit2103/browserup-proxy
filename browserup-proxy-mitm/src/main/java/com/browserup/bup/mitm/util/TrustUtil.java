@@ -4,20 +4,6 @@
 
 package com.browserup.bup.mitm.util;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.browserup.bup.mitm.exception.KeyStoreAccessException;
-import com.browserup.bup.mitm.exception.TrustSourceException;
-import com.browserup.bup.mitm.exception.UncheckedIOException;
-import com.browserup.bup.mitm.tools.DefaultSecurityProviderTool;
-import com.browserup.bup.mitm.tools.SecurityProviderTool;
-import com.browserup.bup.util.ClasspathResourceUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
@@ -31,6 +17,22 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.browserup.bup.mitm.exception.KeyStoreAccessException;
+import com.browserup.bup.mitm.exception.TrustSourceException;
+import com.browserup.bup.mitm.exception.UncheckedIOException;
+import com.browserup.bup.mitm.tools.DefaultSecurityProviderTool;
+import com.browserup.bup.mitm.tools.SecurityProviderTool;
+import com.browserup.bup.util.ClasspathResourceUtil;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 /**
  * Utility class for interacting with the default trust stores on this JVM.
@@ -62,38 +64,41 @@ public class TrustUtil {
     /**
      * Singleton for the list of CAs trusted by Java by default.
      */
-    private static final Supplier<X509Certificate[]> javaTrustedCAs = Suppliers.memoize(new Supplier<X509Certificate[]>() {
-        @Override
-        public X509Certificate[] get() {
-            X509TrustManager defaultTrustManager = getDefaultJavaTrustManager();
+    private static final java.util.function.Supplier<X509Certificate[]> javaTrustedCAs = Suppliers.memoize(
+            new Supplier<X509Certificate[]>() {
+                @Override
+                public X509Certificate[] get() {
+                    X509TrustManager defaultTrustManager = getDefaultJavaTrustManager();
 
-            X509Certificate[] defaultJavaTrustedCerts = defaultTrustManager.getAcceptedIssuers();
+                    X509Certificate[] defaultJavaTrustedCerts = defaultTrustManager.getAcceptedIssuers();
 
-            if (defaultJavaTrustedCerts != null) {
-                return defaultJavaTrustedCerts;
-            } else {
-                return EMPTY_CERTIFICATE_ARRAY;
-            }
-        }
-    });
+                    if (defaultJavaTrustedCerts != null) {
+                        return defaultJavaTrustedCerts;
+                    } else {
+                        return EMPTY_CERTIFICATE_ARRAY;
+                    }
+                }
+            })::get;
 
     /**
      * Singleton for the built-in list of trusted CAs.
      */
-    private static final Supplier<X509Certificate[]> builtinTrustedCAs = Suppliers.memoize(new Supplier<X509Certificate[]>() {
-        @Override
-        public X509Certificate[] get() {
-            try {
-                // the file may contain UTF-8 characters, but the PEM-encoded certificate data itself must be US-ASCII
-                String allCAs = ClasspathResourceUtil.classpathResourceToString(DEFAULT_TRUSTED_CA_RESOURCE, StandardCharsets.UTF_8);
+    private static final java.util.function.Supplier<X509Certificate[]> builtinTrustedCAs = Suppliers.memoize(
+            new Supplier<X509Certificate[]>() {
+                @Override
+                public X509Certificate[] get() {
+                    try {
+                        // the file may contain UTF-8 characters, but the PEM-encoded certificate data itself must be US-ASCII
+                        String allCAs = ClasspathResourceUtil.classpathResourceToString(DEFAULT_TRUSTED_CA_RESOURCE,
+                                                                                        StandardCharsets.UTF_8);
 
-                return readX509CertificatesFromPem(allCAs);
-            } catch (UncheckedIOException e) {
-                log.warn("Unable to load built-in trusted CAs; no built-in CAs will be trusted", e);
-                return new X509Certificate[0];
-            }
-        }
-    });
+                        return readX509CertificatesFromPem(allCAs);
+                    } catch (UncheckedIOException e) {
+                        log.warn("Unable to load built-in trusted CAs; no built-in CAs will be trusted", e);
+                        return new X509Certificate[0];
+                    }
+                }
+            })::get;
 
     /**
      * Returns the built-in list of trusted CAs. This is a copy of cURL's list (https://curl.haxx.se/ca/cacert.pem), which is
@@ -172,7 +177,7 @@ public class TrustUtil {
     }
 
     /**
-     * Extracts the {@link java.security.KeyStore.TrustedCertificateEntry}s from the specified KeyStore. All other entry
+     * Extracts the {@link KeyStore.TrustedCertificateEntry}s from the specified KeyStore. All other entry
      * types, including private keys, will be ignored.
      *
      * @param trustStore keystore containing trusted certificate entries

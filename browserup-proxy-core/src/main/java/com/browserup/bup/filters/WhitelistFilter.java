@@ -6,7 +6,6 @@ package com.browserup.bup.filters;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
@@ -15,7 +14,6 @@ import io.netty.handler.codec.http.HttpUtil;
 import org.littleshoot.proxy.impl.ProxyUtils;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.regex.Pattern;
 
 import static java.util.Collections.*;

@@ -117,7 +117,6 @@ public class ActivityMonitor {
                 // a request became active, so we need to wait for all requests to finish again
                 monitor.leave();
 
-                continue;
             } else {
                 return true;
             }

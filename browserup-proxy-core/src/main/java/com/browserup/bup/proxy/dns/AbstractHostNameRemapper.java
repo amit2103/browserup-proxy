@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public abstract class AbstractHostNameRemapper implements AdvancedHostResolver {
      * The current implementation does not actually use any of the special features of AtomicReference, but it does rely on synchronizing on
      * the AtomicReference when performing write operations. It could be replaced by a volatile reference to a Map and separate lock object.
      */
-    private final AtomicReference<ImmutableMap<String, String>> remappedHostNames = new AtomicReference<>(ImmutableMap.<String, String>of());
+    private final AtomicReference<ImmutableMap<String, String>> remappedHostNames = new AtomicReference<>(ImmutableMap.of());
 
     @Override
     public void remapHosts(Map<String, String> hostRemappings) {

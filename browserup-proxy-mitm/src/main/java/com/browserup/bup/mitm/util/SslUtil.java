@@ -4,23 +4,6 @@
 
 package com.browserup.bup.mitm.util;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.io.CharStreams;
-import io.netty.handler.ssl.OpenSsl;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SupportedCipherSuiteFilter;
-import com.browserup.bup.mitm.trustmanager.InsecureTrustManagerFactory;
-import com.browserup.bup.mitm.TrustSource;
-import com.browserup.bup.mitm.exception.SslContextInitializationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,6 +15,26 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.browserup.bup.mitm.TrustSource;
+import com.browserup.bup.mitm.exception.SslContextInitializationException;
+import com.browserup.bup.mitm.trustmanager.InsecureTrustManagerFactory;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.io.CharStreams;
+
+import io.netty.handler.ssl.OpenSsl;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SupportedCipherSuiteFilter;
 
 /**
  * Utility for creating SSLContexts.
@@ -51,7 +54,7 @@ public class SslUtil {
      * If OpenSsl is not available, retrieves the default ciphers enabled on java SSLContexts. If the enabled JDK cipher
      * list cannot be read, returns the list provided by {@link #getBuiltInCipherList()}.
      */
-    private static final Supplier<List<String>> defaultCipherList = Suppliers.memoize(new Supplier<List<String>>() {
+    private static final java.util.function.Supplier<List<String>> defaultCipherList = Suppliers.memoize(new Supplier<List<String>>() {
         @Override
         public List<String> get() {
             List<String> ciphers;
@@ -69,7 +72,7 @@ public class SslUtil {
 
             return ciphers;
         }
-    });
+    })::get;
 
     /**
      * Creates a netty SslContext for use when connecting to upstream servers. Retrieves the list of trusted root CAs

@@ -73,7 +73,7 @@ public class ProxyManager {
         private final WeakReference<Cache<Integer, BrowserUpProxyServer>> proxyCache;
 
         public ProxyCleanupTask(Cache<Integer, BrowserUpProxyServer> cache) {
-            this.proxyCache = new WeakReference<Cache<Integer, BrowserUpProxyServer>>(cache);
+            this.proxyCache = new WeakReference<>(cache);
         }
 
         @Override
@@ -127,7 +127,7 @@ public class ProxyManager {
             ScheduledExecutorHolder.expiredProxyCleanupExecutor.scheduleWithFixedDelay(new ProxyCleanupTask(proxyCache),
                     EXPIRED_PROXY_CLEANUP_INTERVAL_SECONDS, EXPIRED_PROXY_CLEANUP_INTERVAL_SECONDS, TimeUnit.SECONDS);
         } else {
-            this.proxies = new ConcurrentHashMap<Integer, BrowserUpProxyServer>();
+            this.proxies = new ConcurrentHashMap<>();
             // nothing to timeout, so no Cache
             this.proxyCache = null;
         }

@@ -4,17 +4,6 @@
 
 package com.browserup.bup.mitm;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.browserup.bup.mitm.keys.KeyGenerator;
-import com.browserup.bup.mitm.keys.RSAKeyGenerator;
-import com.browserup.bup.mitm.tools.DefaultSecurityProviderTool;
-import com.browserup.bup.mitm.tools.SecurityProviderTool;
-import com.browserup.bup.mitm.util.EncryptionUtil;
-import com.browserup.bup.mitm.util.MitmConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -23,6 +12,18 @@ import java.security.KeyStore;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.browserup.bup.mitm.keys.KeyGenerator;
+import com.browserup.bup.mitm.keys.RSAKeyGenerator;
+import com.browserup.bup.mitm.tools.DefaultSecurityProviderTool;
+import com.browserup.bup.mitm.tools.SecurityProviderTool;
+import com.browserup.bup.mitm.util.EncryptionUtil;
+import com.browserup.bup.mitm.util.MitmConstants;
+import com.google.common.base.Suppliers;
 
 /**
  * A {@link CertificateAndKeySource} that dynamically generates a CA root certificate and private key. The certificate
@@ -58,7 +59,7 @@ public class RootCertificateGenerator implements CertificateAndKeySource {
      * to allow users to save the new generated root certificate for use in browsers/other HTTP clients.
      * @return CertificateAndKey
      */
-    private final Supplier<CertificateAndKey> generatedCertificateAndKey = Suppliers.memoize(this::generateRootCertificate);
+    private final Supplier<CertificateAndKey> generatedCertificateAndKey = Suppliers.memoize(this::generateRootCertificate)::get;
 
     public RootCertificateGenerator(CertificateInfo rootCertificateInfo,
                                     String messageDigest,

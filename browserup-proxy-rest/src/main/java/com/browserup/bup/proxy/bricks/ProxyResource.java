@@ -78,7 +78,7 @@ public class ProxyResource {
         String proxyPassword = request.param("proxyPassword");
         boolean upstreamProxyHttps = "true".equals(request.param("proxyHTTPS"));
 
-        Hashtable<String, String> options = new Hashtable<String, String>();
+        Hashtable<String, String> options = new Hashtable<>();
 
         // If the upstream proxy is specified via query params that should override any default system level proxy.
         String upstreamHttpProxy = null;
@@ -146,7 +146,7 @@ public class ProxyResource {
         String captureHeaders = request.param("captureHeaders");
         String captureContent = request.param("captureContent");
         String captureBinaryContent = request.param("captureBinaryContent");
-        Set<CaptureType> captureTypes = new HashSet<CaptureType>();
+        Set<CaptureType> captureTypes = new HashSet<>();
         if (Boolean.parseBoolean(captureHeaders)) {
             captureTypes.addAll(CaptureType.getHeaderCaptureTypes());
         }
